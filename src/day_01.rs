@@ -93,4 +93,10 @@ mod tests {
         let path = format!("{}{}", BASE_PATH, "day01_example.txt");
         star_two_base_test(&path, 45000); // 68292 is the right answer
     }
+
+    #[test]
+    fn star_two_main() {
+        let path = format!("{}{}", BASE_PATH, "day01_input.txt");
+        star_two_base_test(&path, 203203); // 203203 is the right answer
+    }
 }
