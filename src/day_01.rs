@@ -9,44 +9,44 @@ impl Elf {
     pub fn carrying_total(&self) -> u32 {
         self.snack_list.iter().sum()
     }
-}
 
-fn parse_elfes(input: String) -> Vec<Elf> {
-    let mut snacks: Vec<u32> = Vec::new();
-    let mut elfs: Vec<Elf> = Vec::new();
+    pub fn build(input: String) -> Vec<Elf> {
+        let mut snacks: Vec<u32> = Vec::new();
+        let mut elfs: Vec<Elf> = Vec::new();
 
-    // go threw all lines
-    for line in input.lines() {
-        if !line.is_empty() {
-            // parse the string to an unsignt int
-            let snack_calories: u32 = line.parse().expect("Number can't be parsed");
-            snacks.push(snack_calories); // collect the calories as u32
-            continue;
+        // go threw all lines
+        for line in input.lines() {
+            if !line.is_empty() {
+                // parse the string to an unsignt int
+                let snack_calories: u32 = line.parse().expect("Number can't be parsed");
+                snacks.push(snack_calories); // collect the calories as u32
+                continue;
+            }
+
+            // if the line is empty create a new elf and collect
+            let elf = Elf { snack_list: snacks };
+            elfs.push(elf);
+            // the snack collection has to be emtied to have room for a new elf
+            snacks = Vec::new();
         }
 
-        // if the line is empty create a new elf and collect
-        let elf = Elf { snack_list: snacks };
-        elfs.push(elf);
-        // the snack collection has to be emtied to have room for a new elf
-        snacks = Vec::new();
+        if !snacks.is_empty() {
+            let elf = Elf { snack_list: snacks };
+            elfs.push(elf);
+        }
+        elfs
     }
-
-    if !snacks.is_empty() {
-        let elf = Elf { snack_list: snacks };
-        elfs.push(elf);
-    }
-    elfs
 }
 
 pub fn most_total_calories(input: String) -> u32 {
-    let elfs = parse_elfes(input);
+    let elfs = Elf::build(input);
     // use the max function to find the elf with the most calories
     let max_elf = elfs.iter().max_by_key(|elf| elf.carrying_total());
     max_elf.expect("No Elfs in the list").carrying_total()
 }
 
 pub fn most_three_elfes_calories(input: String) -> u32 {
-    let mut elfes = parse_elfes(input);
+    let mut elfes = Elf::build(input);
 
     elfes.sort_by_key(|elf| Reverse(elf.carrying_total()));
 
@@ -55,10 +55,8 @@ pub fn most_three_elfes_calories(input: String) -> u32 {
     first_three.iter().map(|elf| elf.carrying_total()).sum()
 }
 
-
-
 #[cfg(test)]
-mod tests {
+mod tests_day_01 {
     use super::*;
     use std::fs;
 
