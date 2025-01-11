@@ -1,23 +1,53 @@
-fn evaluate_tool_score(latter: &str) -> u32 {
-    match latter {
+fn evaluate_tool_score(letter: &str) -> u32 {
+    match letter {
         "X" => 1,
         "Y" => 2,
         "Z" => 3,
-        _ => panic!("Can't evaluate a score from the latter: {latter}"),
+        _ => panic!("Can't evaluate a score from the letter: {letter}"),
     }
 }
 
-fn convert_opponent(latter: &str) -> u32 {
-    match latter {
+fn convert_opponent(letter: &str) -> u32 {
+    match letter {
         "A" => 1,
         "B" => 2,
         "C" => 3,
-        _ => panic!("Can't evaluate opponent from the latter: {latter}"),
+        _ => panic!("Can't evaluate opponent from the letter: {letter}"),
     }
 }
 
-fn evaluate_round(me: &str, opponent: &str) -> u32 {
-    let own_score = evaluate_tool_score(&me);
+fn choose_tool_score(opponent: &str, win_condition: &str) -> u32 {
+    match win_condition {
+        // lose
+        "X" => {
+            let score = convert_opponent(&opponent);
+            if score == 1 {
+                3
+            } else {
+                score - 1
+            }
+        }
+        // draw
+        "Y" => convert_opponent(&opponent),
+        // win
+        "Z" => {
+            let score = convert_opponent(&opponent);
+            if score == 3 {
+                1
+            } else {
+                score + 1
+            }
+        }
+        _ => panic!("The input letter {} isn't in the ruleset", win_condition),
+    }
+}
+
+fn evaluate_round(me: &str, opponent: &str, strat: Option<bool>) -> u32 {
+    let strat = strat.unwrap_or(false);
+    let own_score = match strat {
+        true => choose_tool_score(&opponent, &me),
+        _ => evaluate_tool_score(&me),
+    };
     let opp_score = convert_opponent(&opponent);
 
     // draw
@@ -33,16 +63,16 @@ fn evaluate_round(me: &str, opponent: &str) -> u32 {
     own_score + 6
 }
 
-pub fn get_score(input: &str) -> u32 {
+pub fn get_score(input: &str, strat: Option<bool>) -> u32 {
     let mut scores: Vec<u32> = Vec::new();
     for (index, line) in input.lines().enumerate() {
         let parts: Vec<&str> = line.split(' ').collect();
-        // check all needed latters are there
+        // check all needed letters are there
         if parts.len() < 2 {
             panic!("There are to less values in the line {}", index + 1)
         }
 
-        scores.push(evaluate_round(&parts[1], &parts[0]));
+        scores.push(evaluate_round(&parts[1], &parts[0], strat));
     }
 
     scores.iter().sum()
@@ -62,7 +92,7 @@ mod tests_day_02 {
 A Y
 B X
 C Z";
-        let result = get_score(&input);
+        let result = get_score(&input, None);
         assert_eq!(result, 15);
     }
 
@@ -70,8 +100,17 @@ C Z";
     fn star_one_input() {
         let input = fs::read_to_string(format!("{BASE_PATH}day02_input.txt"))
             .expect("Test file cannot be opend");
-        let result = get_score(&input);
+        let result = get_score(&input, None);
 
         assert_eq!(result, 11767); // 11767 is the right answer
+    }
+
+    #[test]
+    fn star_two_input() {
+        let input = fs::read_to_string(format!("{BASE_PATH}day02_input.txt"))
+            .expect("Test file cannot be opend");
+        let result = get_score(&input, Some(true));
+
+        assert_eq!(result, 13886); // 13886 is the right answer
     }
 }
