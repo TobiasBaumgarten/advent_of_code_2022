@@ -29,7 +29,31 @@ fn get_priority_rucksack(input: &str) -> u32 {
     sum
 }
 
-fn sum_pirorities(input: &str) -> u32 {
+pub fn find_sum_batches_in_group(input: &str) -> u32 {
+    let lines: Vec<&str> = input.lines().collect();
+    let mut sum: u32 = 0;
+    // all groups have to consist of the rucksacks
+    if lines.len() % 3 != 0 {
+        panic!("The input lines have to be a multiple of 3");
+    }
+    // create chunks that are same as a group
+    let group_size = 3;
+    let chunks: Vec<Vec<&str>> = lines.chunks(group_size).map(|c| c.to_vec()).collect();
+
+    // loop threw the group
+    for group in chunks {
+        // find the badges
+        for c in group[0].chars() {
+            if group[1].contains(c) && group[2].contains(c) {
+                sum += get_priority_item(&c) as u32;
+                break;
+            }
+        }
+    }
+    sum
+}
+
+pub fn sum_pirorities(input: &str) -> u32 {
     input.lines().map(|l| get_priority_rucksack(l)).sum()
 }
 
@@ -59,6 +83,26 @@ CrZsJsPPZsGzwwsLwLmpwMDw";
             .expect("Test file cannot be opened");
 
         let sum = sum_pirorities(&input);
-        assert_eq!(sum, 8252); // is the right answer
+        assert_eq!(sum, 8252); // 8252 is the right answer
+    }
+
+    #[test]
+    fn star_two_example() {
+        let input = "\
+vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg";
+
+        let sum = find_sum_batches_in_group(input);
+        assert_eq!(sum, 18);
+    }
+
+    #[test]
+    fn star_two_input() {
+        let input = fs::read_to_string(format!("{BASE_PATH}day03_input.txt"))
+            .expect("Test file cannot be opened");
+
+        let sum = find_sum_batches_in_group(&input);
+        assert_eq!(sum, 2828); // 2828 is the right answer
     }
 }
