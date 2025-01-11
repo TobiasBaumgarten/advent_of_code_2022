@@ -29,7 +29,8 @@ fn get_priority_rucksack(input: &str) -> u32 {
     sum
 }
 
-pub fn find_sum_batches_in_group(input: &str) -> u32 {
+// look threw all groups and sum the batches priorities
+pub fn find_and_sum_batches_in_groups(input: &str) -> u32 {
     let lines: Vec<&str> = input.lines().collect();
     let mut sum: u32 = 0;
     // all groups have to consist of the rucksacks
@@ -59,9 +60,9 @@ pub fn sum_pirorities(input: &str) -> u32 {
 
 #[cfg(test)]
 mod tests_day_03 {
+    use crate::load_test_file;
+
     use super::*;
-    use std::fs;
-    const BASE_PATH: &str = "src/test_files/";
 
     #[test]
     fn star_one_example() {
@@ -79,8 +80,7 @@ CrZsJsPPZsGzwwsLwLmpwMDw";
 
     #[test]
     fn star_one_input() {
-        let input = fs::read_to_string(format!("{BASE_PATH}day03_input.txt"))
-            .expect("Test file cannot be opened");
+        let input = load_test_file(3);
 
         let sum = sum_pirorities(&input);
         assert_eq!(sum, 8252); // 8252 is the right answer
@@ -93,16 +93,16 @@ vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg";
 
-        let sum = find_sum_batches_in_group(input);
+        let sum = find_and_sum_batches_in_groups(input);
         assert_eq!(sum, 18);
     }
 
     #[test]
     fn star_two_input() {
-        let input = fs::read_to_string(format!("{BASE_PATH}day03_input.txt"))
-            .expect("Test file cannot be opened");
+        let input = load_test_file(3);
+            
 
-        let sum = find_sum_batches_in_group(&input);
+        let sum = find_and_sum_batches_in_groups(&input);
         assert_eq!(sum, 2828); // 2828 is the right answer
     }
 }

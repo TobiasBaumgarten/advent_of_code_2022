@@ -10,7 +10,7 @@ impl Elf {
         self.snack_list.iter().sum()
     }
 
-    pub fn build(input: String) -> Vec<Elf> {
+    pub fn build(input: &str) -> Vec<Elf> {
         let mut snacks: Vec<u32> = Vec::new();
         let mut elfs: Vec<Elf> = Vec::new();
 
@@ -38,15 +38,15 @@ impl Elf {
     }
 }
 
-pub fn most_total_calories(input: String) -> u32 {
+pub fn most_total_calories(input: &str) -> u32 {
     let elfs = Elf::build(input);
     // use the max function to find the elf with the most calories
     let max_elf = elfs.iter().max_by_key(|elf| elf.carrying_total());
     max_elf.expect("No Elfs in the list").carrying_total()
 }
 
-pub fn most_three_elfes_calories(input: String) -> u32 {
-    let mut elfes = Elf::build(input);
+pub fn most_three_elfes_calories(input: &str) -> u32 {
+    let mut elfes = Elf::build(&input);
 
     elfes.sort_by_key(|elf| Reverse(elf.carrying_total()));
 
@@ -57,44 +57,55 @@ pub fn most_three_elfes_calories(input: String) -> u32 {
 
 #[cfg(test)]
 mod tests_day_01 {
+    use crate::load_test_file;
+
     use super::*;
-    use std::fs;
 
-    const BASE_PATH: &str = "src/test_files/";
+    const EXAMPLE: &str = "\
+    1000
+2000
+3000
 
-    fn star_one_base_test(path: &str, expected: u32) {
-        let input: String = fs::read_to_string(path).expect("Test file cannot be opened");
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000";
+
+    fn star_one_base_test(input: &str, expected: u32) {
         let result = most_total_calories(input);
         assert_eq!(result, expected);
     }
 
-    fn star_two_base_test(path: &str, expected: u32) {
-        let input: String = fs::read_to_string(path).expect("Test file cannot be opened");
-        let result = most_three_elfes_calories(input);
+    fn star_two_base_test(input: &str, expected: u32) {
+        let result = most_three_elfes_calories(&input);
         assert_eq!(result, expected);
     }
 
     #[test]
     fn star_one_example_test() {
-        let path = format!("{}{}", BASE_PATH, "day01_example.txt");
-        star_one_base_test(&path, 24000);
+        star_one_base_test(&EXAMPLE, 24000);
     }
 
     #[test]
     fn star_one_main() {
-        let path = format!("{}{}", BASE_PATH, "day01_input.txt");
-        star_one_base_test(&path, 68292); // 68292 is the right answer
+        let input = load_test_file(1);
+        star_one_base_test(&input, 68292); // 68292 is the right answer
     }
 
     #[test]
     fn star_two_example() {
-        let path = format!("{}{}", BASE_PATH, "day01_example.txt");
-        star_two_base_test(&path, 45000); // 68292 is the right answer
+        star_two_base_test(&EXAMPLE, 45000); // 68292 is the right answer
     }
 
     #[test]
     fn star_two_main() {
-        let path = format!("{}{}", BASE_PATH, "day01_input.txt");
-        star_two_base_test(&path, 203203); // 203203 is the right answer
+        let input = load_test_file(1);
+        star_two_base_test(&input, 203203); // 203203 is the right answer
     }
 }

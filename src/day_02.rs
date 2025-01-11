@@ -81,10 +81,9 @@ pub fn get_score(input: &str, strat: Option<bool>) -> u32 {
 #[cfg(test)]
 mod tests_day_02 {
 
-    use super::*;
-    use std::fs;
+    use crate::load_test_file;
 
-    const BASE_PATH: &str = "src/test_files/";
+    use super::*;
 
     #[test]
     fn star_one_example() {
@@ -98,8 +97,7 @@ C Z";
 
     #[test]
     fn star_one_input() {
-        let input = fs::read_to_string(format!("{BASE_PATH}day02_input.txt"))
-            .expect("Test file cannot be opend");
+        let input = load_test_file(2);
         let result = get_score(&input, None);
 
         assert_eq!(result, 11767); // 11767 is the right answer
@@ -107,8 +105,7 @@ C Z";
 
     #[test]
     fn star_two_input() {
-        let input = fs::read_to_string(format!("{BASE_PATH}day02_input.txt"))
-            .expect("Test file cannot be opend");
+        let input = load_test_file(2);
         let result = get_score(&input, Some(true));
 
         assert_eq!(result, 13886); // 13886 is the right answer
