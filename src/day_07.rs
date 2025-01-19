@@ -119,16 +119,16 @@ pub fn solve_star_two(input: &str) -> u32 {
     }
     let least_freed = least_freed as u32;
 
+    // find the smalest possible folder to delete for the update
     let big_enough = sys
         .iter()
         .filter(|(_, &size)| size > least_freed)
         .map(|(_, &size)| size)
         .min();
 
-    dbg!(&big_enough);
 
-    match big_enough.iter().min() {
-        Some(&size) => size,
+    match big_enough {
+        Some(size) => size,
         None => panic!("There is something wrong!"),
     }
 }
