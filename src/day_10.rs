@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
+const CRT_DIMENSIONS: (u8, u8) = (40, 6);
+
 enum Instruction {
     Add(i32),
     Noop,
@@ -21,41 +23,64 @@ impl FromStr for Instruction {
     }
 }
 
+struct LabeldInstruction {
+    cycle: usize,
+    instruction: Instruction,
+}
+
 pub fn solve_star_one(input: &str) -> i32 {
-    let instructions: Vec<Instruction> = input
-        .lines()
-        .map(|l| Instruction::from_str(l).unwrap())
-        .collect();
+    let instructions = parse_input(input);
+
     let mut register: i32 = 1;
-    let mut cycle = 2;
+    // let mut cycle = 2;
 
     let mut milestones: HashMap<i32, i32> =
         HashMap::from([(20, 0), (60, 0), (100, 0), (140, 0), (180, 0), (220, 0)]);
 
-    for instruction in instructions {
-        match instruction {
-            Instruction::Add(value) => {
-                register += value;
-                cycle += 2;
-            }
-            Instruction::Noop => cycle += 1,
+    for cycle in 1..221 {
+        let i_cycle = cycle as i32;
+        if milestones.contains_key(&i_cycle) {
+            milestones.insert(i_cycle, register);
         }
 
-        if milestones.contains_key(&cycle) {
-            milestones.insert(cycle, register);
-        } else if milestones.contains_key(&(cycle - 1)) {
-            let cy = cycle - 1;
-            milestones.insert(cy, register);
+        let instruction = instructions.iter().find(|&i| i.cycle == cycle);
+
+        if let Some(laInstruction) = instruction {
+            match laInstruction.instruction {
+                Instruction::Add(value) => register += value,
+                Instruction::Noop => (),
+            }
         }
     }
+    dbg!(&milestones);
 
-    milestones.iter().map(|(key, value)| key * value).sum()
+    milestones
+        .iter()
+        .map(|(&key, &value)| (key as i32) * value)
+        .sum()
+}
+
+fn parse_input(input: &str) -> Vec<LabeldInstruction> {
+    let mut cycle = 0;
+    input
+        .lines()
+        .map(|l| {
+            let instruction = Instruction::from_str(l).unwrap();
+            match instruction {
+                Instruction::Add(_) => cycle += 2,
+                Instruction::Noop => cycle += 1,
+            }
+            LabeldInstruction {
+                instruction: instruction,
+                cycle: cycle,
+            }
+        })
+        .collect()
 }
 
 pub fn solve_star_two() {
     todo!("A lot to do");
 }
-
 
 #[cfg(test)]
 mod test_day_10 {
