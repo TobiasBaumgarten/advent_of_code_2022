@@ -36,12 +36,13 @@ struct Monkey {
     operation: Operation,
     test: i32,
     throw_monkey: (u8, u8),
-    inspected: u32,
+    inspected_count: u32,
 }
 
+/// a monkey to handle the data
 impl Monkey {
     /// converts a `Monkey` from a string
-    pub fn from_str(input: &str) -> Self {
+    fn from_str(input: &str) -> Self {
         let parts: Vec<&str> = input.split(|d| d == ':' || d == '\n').collect();
 
         // get the name
@@ -83,18 +84,19 @@ impl Monkey {
             operation,
             test,
             throw_monkey: (test_true, test_false),
-            inspected: 0,
+            inspected_count: 0,
         }
     }
 
-    fn inspected(&mut self) {
-        self.inspected += 1;
+    // increase the inspection count
+    fn is_inspecting(&mut self) {
+        self.inspected_count += 1;
     }
 
     /// Proceeds a item with a given worry level
     fn inspect_item(&mut self, item: i32) -> (u8, i32) {
         let mut item = item;
-        self.inspected();
+        self.is_inspecting();
 
         match self.operation {
             Operation::Add(option) => match option {
@@ -158,11 +160,11 @@ pub fn solve_star_one(input: &str, rounds: usize) -> u32 {
         }
     }
 
-    monkeys.sort_by_key(|m| -(m.inspected as i32));
+    monkeys.sort_by_key(|m| -(m.inspected_count as i32));
 
     dbg!(&monkeys);
 
-    monkeys[0].inspected * monkeys[1].inspected
+    monkeys[0].inspected_count * monkeys[1].inspected_count
 }
 
 const EXAMPLE: &str = "\
@@ -233,7 +235,7 @@ Monkey 0:
             items: [66, 59, 64, 51].to_vec(),
             operation: Operation::Multiply(Some(3)),
             test: 2,
-            inspected: 0,
+            inspected_count: 0,
             throw_monkey: (1, 4),
         };
         assert_eq!(result, expected);
