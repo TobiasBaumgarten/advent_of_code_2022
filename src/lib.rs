@@ -12,13 +12,14 @@ pub mod day_07;
 pub mod day_08;
 pub mod day_09;
 pub mod day_10;
+pub mod day_11;
 
 /// Loads the input by a given day
 /// # Example
 /// ```
 /// use advent_of_code_2022::day_01;
 /// use advent_of_code_2022::load_input;
-/// 
+///
 /// let input = load_input(1);
 /// day_01::solve_star_one(&input);
 /// ```

@@ -1,3 +1,5 @@
+#![doc = include_str!("descriptions/day_10.md")]
+
 use std::collections::HashMap;
 use std::str::FromStr;
 
