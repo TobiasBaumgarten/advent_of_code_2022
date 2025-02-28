@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::str::FromStr;
 
-const CRT_DIMENSIONS: (u8, u8) = (40, 6);
+const CRT_DIMENSIONS: (usize, usize) = (40, 6);
 
 enum Instruction {
     Add(i32),
@@ -28,11 +28,47 @@ struct LabeldInstruction {
     instruction: Instruction,
 }
 
+pub fn solve_star_two(input: &str) -> Vec<String> {
+    let instructions = parse_input(input);
+    let mut register: i32 = 1;
+    let max = instructions.iter().map(|i| i.cycle).max().unwrap();
+    let mut crt: Vec<String> = Vec::new();
+
+    for cycle in 1..max + 1 {
+        // get the current position
+        let position = ((cycle - 1) % CRT_DIMENSIONS.0) as i32;
+        if position == 0 {
+            // create a new line if we the position is 0
+            crt.push(String::new());
+        }
+        // get the current line
+        let line = crt.last_mut().unwrap();
+
+        // check what to draw
+        if position - 1 <= register && position + 1 >= register {
+            line.push('#');
+        } else {
+            line.push('.');
+        }
+
+        // handle register
+        let instruction = instructions.iter().find(|&i| i.cycle == cycle);
+        if let Some(laInstruction) = instruction {
+            match laInstruction.instruction {
+                Instruction::Add(value) => {
+                    println!("Cycle {cycle}: addx {:?}", value);
+                    register += value
+                }
+                Instruction::Noop => (),
+            }
+        }
+    }
+    crt
+}
+
 pub fn solve_star_one(input: &str) -> i32 {
     let instructions = parse_input(input);
-
     let mut register: i32 = 1;
-    // let mut cycle = 2;
 
     let mut milestones: HashMap<i32, i32> =
         HashMap::from([(20, 0), (60, 0), (100, 0), (140, 0), (180, 0), (220, 0)]);
@@ -43,8 +79,8 @@ pub fn solve_star_one(input: &str) -> i32 {
             milestones.insert(i_cycle, register);
         }
 
+        // handle register
         let instruction = instructions.iter().find(|&i| i.cycle == cycle);
-
         if let Some(laInstruction) = instruction {
             match laInstruction.instruction {
                 Instruction::Add(value) => register += value,
@@ -78,10 +114,6 @@ fn parse_input(input: &str) -> Vec<LabeldInstruction> {
         .collect()
 }
 
-pub fn solve_star_two() {
-    todo!("A lot to do");
-}
-
 #[cfg(test)]
 mod test_day_10 {
     use super::*;
@@ -98,6 +130,27 @@ mod test_day_10 {
         let input = load_input(10);
         let r = solve_star_one(&input);
         assert_eq!(r, 14760);
+    }
+
+    #[test]
+    fn test_example_star_two() {
+        let expected = "##..##..##..##..##..##..##..##..##..##..";
+        let result = solve_star_two(EXAMPLE);
+        assert_eq!(expected, result[0]);
+    }
+
+    #[test]
+    fn test_star_two() {
+        let expected = "\
+####.####..##..####.###..#..#.###..####.
+#....#....#..#.#....#..#.#..#.#..#.#....
+###..###..#....###..#..#.#..#.#..#.###..
+#....#....#.##.#....###..#..#.###..#....
+#....#....#..#.#....#.#..#..#.#.#..#....
+####.#.....###.####.#..#..##..#..#.####.";
+        let input = load_input(10);
+        let result = solve_star_two(&input);
+        assert_eq!(expected, result.join("\n"));
     }
 }
 
