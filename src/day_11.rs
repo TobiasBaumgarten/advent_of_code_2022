@@ -1,13 +1,14 @@
+#![doc = include_str!("descriptions/day_11.md")]
 #[derive(Debug, PartialEq, Eq)]
 enum Operation {
-    Add(Option<u128>),
-    Multiply(Option<u128>),
+    Add(Option<u64>),
+    Multiply(Option<u64>),
 }
 
 impl Operation {
     fn from_str(input: &str) -> Self {
         let parts = input.split_whitespace().collect::<Vec<&str>>();
-        let value: Option<u128> = match parts.last() {
+        let value: Option<u64> = match parts.last() {
             Some(&"old") => None,
             Some(value) => Some(value.parse().unwrap()),
             None => None,
@@ -32,9 +33,9 @@ fn split_blocks(input: &str) -> Vec<&str> {
 #[derive(Debug, PartialEq, Eq)]
 struct Monkey {
     name: u8,
-    items: Vec<u128>,
+    items: Vec<u64>,
     operation: Operation,
-    test: u128,
+    test: u64,
     throw_monkey: (u8, u8),
     inspected_count: u32,
 }
@@ -51,9 +52,9 @@ impl Monkey {
 
         // get the Starting Items
         let cleared_spaces = parts[3].replace(" ", "").replace("\r", "");
-        let starting_items: Vec<u128> = cleared_spaces
+        let starting_items: Vec<u64> = cleared_spaces
             .split(",")
-            .map(|s| s.parse::<u128>().unwrap())
+            .map(|s| s.parse::<u64>().unwrap())
             .collect();
 
         // get the operation
@@ -61,7 +62,7 @@ impl Monkey {
 
         // get the test
         let test = parts[7].split_whitespace().collect::<Vec<&str>>();
-        let test: u128 = test.last().unwrap().parse().unwrap();
+        let test: u64 = test.last().unwrap().parse().unwrap();
 
         // get monkey options
         let test_true = parts[9]
@@ -94,7 +95,7 @@ impl Monkey {
     }
 
     /// Proceeds a item with a given worry level
-    fn inspect_item(&mut self, item: u128, worry_behavior: fn(u128) -> u128) -> (u8, u128) {
+    fn inspect_item(&mut self, item: u64, worry_behavior: fn(u64) -> u64) -> (u8, u64) {
         let mut item = item;
         self.is_inspecting();
 
@@ -117,7 +118,7 @@ impl Monkey {
         return (self.throw_monkey.1, item);
     }
 
-    fn inspect_items(&mut self, worry_behavior: fn(u128) -> u128) -> Vec<(u8, u128)> {
+    fn inspect_items(&mut self, worry_behavior: fn(u64) -> u64) -> Vec<(u8, u64)> {
         let items = std::mem::take(&mut self.items);
 
         // Process all items
@@ -127,20 +128,20 @@ impl Monkey {
             .collect()
     }
 
-    fn push_item(&mut self, item: u128) {
+    fn push_item(&mut self, item: u64) {
         self.items.push(item);
     }
 }
 
-pub fn worry_behavior_div_3(item: u128) -> u128 {
+pub fn worry_behavior_div_3(item: u64) -> u64 {
     item / 3
 }
 
-pub fn worry_behavior_none(item: u128) -> u128 {
+pub fn worry_behavior_none(item: u64) -> u64 {
     item
 }
 
-pub fn solve_stars(input: &str, rounds: usize, worry_behavior: fn(u128) -> u128) -> u64 {
+pub fn solve_stars(input: &str, rounds: usize, worry_behavior: fn(u64) -> u64) -> u64 {
     let blocks = split_blocks(&input);
     let mut monkeys: Vec<Monkey> = Vec::new();
 
@@ -151,7 +152,7 @@ pub fn solve_stars(input: &str, rounds: usize, worry_behavior: fn(u128) -> u128)
     }
 
     // calculate the product of all test divisors
-    let modulo: u128 = monkeys.iter().map(|m| m.test).product();
+    let modulo: u64 = monkeys.iter().map(|m| m.test).product();
 
     // sort monkey, so that the index equal to the name
     monkeys.sort_by_key(|m| m.name);
