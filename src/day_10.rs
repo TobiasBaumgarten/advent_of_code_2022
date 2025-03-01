@@ -55,8 +55,8 @@ pub fn solve_star_two(input: &str) -> Vec<String> {
 
         // handle register
         let instruction = instructions.iter().find(|&i| i.cycle == cycle);
-        if let Some(laInstruction) = instruction {
-            match laInstruction.instruction {
+        if let Some(la_instruction) = instruction {
+            match la_instruction.instruction {
                 Instruction::Add(value) => {
                     println!("Cycle {cycle}: addx {:?}", value);
                     register += value
@@ -83,8 +83,8 @@ pub fn solve_star_one(input: &str) -> i32 {
 
         // handle register
         let instruction = instructions.iter().find(|&i| i.cycle == cycle);
-        if let Some(laInstruction) = instruction {
-            match laInstruction.instruction {
+        if let Some(la_instruction) = instruction {
+            match la_instruction.instruction {
                 Instruction::Add(value) => register += value,
                 Instruction::Noop => (),
             }

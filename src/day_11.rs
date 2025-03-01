@@ -184,7 +184,7 @@ pub fn solve_stars(input: &str, rounds: usize, worry_behavior: fn(u64) -> u64) -
     (monkeys[0].inspected_count as u64) * (monkeys[1].inspected_count as u64)
 }
 
-const EXAMPLE: &str = "\
+pub const EXAMPLE: &str = "\
 Monkey 0:
   Starting items: 79, 98
   Operation: new = old * 19
