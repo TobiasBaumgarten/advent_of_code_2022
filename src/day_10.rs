@@ -25,15 +25,29 @@ impl FromStr for Instruction {
     }
 }
 
-struct LabeldInstruction {
-    cycle: usize,
-    instruction: Instruction,
+struct CPU {
+    register: i32,
+}
+
+impl CPU {
+    fn new() -> Self {
+        Self { register: 1 }
+    }
+
+    fn compute(&mut self, instruction: Option<&Instruction>) {
+        if let Some(la_instruction) = instruction {
+            match la_instruction {
+                Instruction::Add(value) => self.register += value,
+                Instruction::Noop => (),
+            }
+        }
+    }
 }
 
 pub fn solve_star_two(input: &str) -> Vec<String> {
     let instructions = parse_input(input);
-    let mut register: i32 = 1;
-    let max = instructions.iter().map(|i| i.cycle).max().unwrap();
+    let mut cpu = CPU::new();
+    let max = instructions.iter().map(|(i, _)| i).max().unwrap();
     let mut crt: Vec<String> = Vec::new();
 
     for cycle in 1..max + 1 {
@@ -46,51 +60,40 @@ pub fn solve_star_two(input: &str) -> Vec<String> {
         // get the current line
         let line = crt.last_mut().unwrap();
 
-        // check what to draw
-        if position - 1 <= register && position + 1 >= register {
-            line.push('#');
-        } else {
-            line.push('.');
-        }
+        // draw the sprite
+        line.push(draw_sprite(position, &cpu));
 
         // handle register
-        let instruction = instructions.iter().find(|&i| i.cycle == cycle);
-        if let Some(la_instruction) = instruction {
-            match la_instruction.instruction {
-                Instruction::Add(value) => {
-                    println!("Cycle {cycle}: addx {:?}", value);
-                    register += value
-                }
-                Instruction::Noop => (),
-            }
-        }
+        let instruction = instructions.get(&cycle);
+        cpu.compute(instruction);
     }
     crt
 }
 
+fn draw_sprite(position: i32, cpu: &CPU) -> char {
+    if (position - cpu.register).abs() < 2 {
+        '#'
+    } else {
+        '.'
+    }
+}
+
 pub fn solve_star_one(input: &str) -> i32 {
     let instructions = parse_input(input);
-    let mut register: i32 = 1;
+    let mut cpu = CPU::new();
 
     let mut milestones: HashMap<i32, i32> =
         HashMap::from([(20, 0), (60, 0), (100, 0), (140, 0), (180, 0), (220, 0)]);
 
     for cycle in 1..221 {
-        let i_cycle = cycle as i32;
-        if milestones.contains_key(&i_cycle) {
-            milestones.insert(i_cycle, register);
+        if milestones.contains_key(&cycle) {
+            milestones.insert(cycle, cpu.register);
         }
 
         // handle register
-        let instruction = instructions.iter().find(|&i| i.cycle == cycle);
-        if let Some(la_instruction) = instruction {
-            match la_instruction.instruction {
-                Instruction::Add(value) => register += value,
-                Instruction::Noop => (),
-            }
-        }
+        let instruction = instructions.get(&(cycle as usize));
+        cpu.compute(instruction);
     }
-    dbg!(&milestones);
 
     milestones
         .iter()
@@ -98,22 +101,18 @@ pub fn solve_star_one(input: &str) -> i32 {
         .sum()
 }
 
-fn parse_input(input: &str) -> Vec<LabeldInstruction> {
+fn parse_input(input: &str) -> HashMap<usize, Instruction> {
     let mut cycle = 0;
-    input
-        .lines()
-        .map(|l| {
-            let instruction = Instruction::from_str(l).unwrap();
-            match instruction {
-                Instruction::Add(_) => cycle += 2,
-                Instruction::Noop => cycle += 1,
-            }
-            LabeldInstruction {
-                instruction: instruction,
-                cycle: cycle,
-            }
-        })
-        .collect()
+    let mut instruction_map: HashMap<usize, Instruction> = HashMap::new();
+    for line in input.lines() {
+        let instruction = Instruction::from_str(line).unwrap();
+        match instruction {
+            Instruction::Add(_) => cycle += 2,
+            Instruction::Noop => cycle += 1,
+        };
+        instruction_map.insert(cycle, instruction);
+    }
+    instruction_map
 }
 
 #[cfg(test)]
