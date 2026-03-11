@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="— Day 3: Rucksack Reorganization —"><title>advent_of_code_2022::day_03 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-aa0817cf.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="advent_of_code_2022" data-themes="" data-resource-suffix="" data-rustdoc-version="1.90.0 (1159e78c4 2025-09-14)" data-channel="1.90.0" data-search-js="search-fa3e91e5.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../advent_of_code_2022/index.html">advent_<wbr>of_<wbr>code_<wbr>2022</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module day_03</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#-day-3-rucksack-reorganization-" title="— Day 3: Rucksack Reorganization —">— Day 3: Rucksack Reorganization —</a></li><li><a href="#-part-two-" title="— Part Two —">— Part Two —</a></li></ul><h3><a href="#functions">Module Items</a></h3><ul class="block"><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate advent_<wbr>of_<wbr>code_<wbr>2022</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">advent_of_code_2022</a></div><h1>Module <span>day_03</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/advent_of_code_2022/day_03.rs.html#1-116">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h3 id="-day-3-rucksack-reorganization-"><a class="doc-anchor" href="#-day-3-rucksack-reorganization-">§</a>— Day 3: Rucksack Reorganization —</h3>
+<p>One Elf has the important job of loading all of the <a href="https://en.wikipedia.org/wiki/Rucksack">rucksacks</a> with supplies for the jungle journey. Unfortunately, that Elf didn’t quite follow the packing instructions, and so a few items now need to be rearranged.</p>
+<p>Each rucksack has two large <em>compartments</em>. All items of a given type are meant to go into exactly one of the two compartments. The Elf that did the packing failed to follow this rule for exactly one item type per rucksack.</p>
+<p>The Elves have made a list of all of the items currently in each rucksack (your puzzle input), but they need your help finding the errors. Every item type is identified by a single lowercase or uppercase letter (that is, <code>a</code> and <code>A</code> refer to different types of items).</p>
+<p>The list of items for each rucksack is given as characters all on a single line. A given rucksack always has the same number of items in each of its two compartments, so the first half of the characters represent items in the first compartment, while the second half of the characters represent items in the second compartment.</p>
+<p>For example, suppose you have the following list of contents from six rucksacks:</p>
+<div class="example-wrap"><pre class="language-txt"><code>vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw
+</code></pre></div>
+<ul>
+<li>The first rucksack contains the items <code>vJrwpWtwJgWrhcsFMMfFFhFp</code>, which means its first compartment contains the items <code>vJrwpWtwJgWr</code>, while the second compartment contains the items <code>hcsFMMfFFhFp</code>. The only item type that appears in both compartments is lowercase <code>p</code>.</li>
+<li>The second rucksack’s compartments contain <code>jqHRNqRjqzjGDLGL</code> and <code>rsFMfFZSrLrFZsSL</code>. The only item type that appears in both compartments is uppercase <code>L</code>.</li>
+<li>The third rucksack’s compartments contain <code>PmmdzqPrV</code> and <code>vPwwTWBwg</code>; the only common item type is uppercase <code>P</code>.</li>
+<li>The fourth rucksack’s compartments only share item type <code>v</code>.</li>
+<li>The fifth rucksack’s compartments only share item type <code>t</code>.</li>
+<li>The sixth rucksack’s compartments only share item type <code>s</code>.</li>
+</ul>
+<p>To help prioritize item rearrangement, every item type can be converted to a <em>priority</em>:</p>
+<ul>
+<li>Lowercase item types <code>a</code> through <code>z</code> have priorities 1 through 26.</li>
+<li>Uppercase item types <code>A</code> through <code>Z</code> have priorities 27 through 52.</li>
+</ul>
+<p>In the above example, the priority of the item type that appears in both compartments of each rucksack is 16 (<code>p</code>), 38 (<code>L</code>), 42 (<code>P</code>), 22 (<code>v</code>), 20 (<code>t</code>), and 19 (<code>s</code>); the sum of these is <code>157</code>.</p>
+<p>Find the item type that appears in both compartments of each rucksack. <em>What is the sum of the priorities of those item types?</em></p>
+<h3 id="-part-two-"><a class="doc-anchor" href="#-part-two-">§</a>— Part Two —</h3>
+<p>As you finish identifying the misplaced items, the Elves come to you with another issue.</p>
+<p>For safety, the Elves are divided into groups of three. Every Elf carries a badge that identifies their group. For efficiency, within each group of three Elves, the badge is the <em>only item type carried by all three Elves</em>. That is, if a group’s badge is item type <code>B</code>, then all three Elves will have item type <code>B</code> somewhere in their rucksack, and at most two of the Elves will be carrying any other item type.</p>
+<p>The problem is that someone forgot to put this year’s updated authenticity sticker on the badges. All of the badges need to be pulled out of the rucksacks so the new authenticity stickers can be attached.</p>
+<p>Additionally, nobody wrote down which item type corresponds to each group’s badges. The only way to tell which item type is the right one is by finding the one item type that is <em>common between all three Elves</em> in each group.</p>
+<p>Every set of three lines in your list corresponds to a single group, but each group can have a different badge item type. So, in the above example, the first group’s rucksacks are the first three lines:</p>
+<div class="example-wrap"><pre class="language-txt"><code>vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+</code></pre></div>
+<p>And the second group’s rucksacks are the next three lines:</p>
+<div class="example-wrap"><pre class="language-txt"><code>wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw
+</code></pre></div>
+<p>In the first group, the only item type that appears in all three rucksacks is lowercase <code>r</code>; this must be their badges. In the second group, their badge item type must be <code>Z</code>.</p>
+<p>Priorities for these items must still be found to organize the sticker attachment efforts: here, they are 18 (<code>r</code>) for the first group and 52 (<code>Z</code>) for the second group. The sum of these is <code>70</code>.</p>
+<p>Find the item type that corresponds to the badges of each three-Elf group. <em>What is the sum of the priorities of those item types?</em></p>
+</div></details><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.solve_star_one.html" title="fn advent_of_code_2022::day_03::solve_star_one">solve_<wbr>star_<wbr>one</a></dt><dd>Solves star one
+Sums the priorities</dd><dt><a class="fn" href="fn.solve_star_two.html" title="fn advent_of_code_2022::day_03::solve_star_two">solve_<wbr>star_<wbr>two</a></dt><dd>Solves star two
+find the equal items in both compartments and give the group the batch
+then sums the priorities</dd></dl></section></div></main></body></html>

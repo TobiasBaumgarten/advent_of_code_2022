@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["solve_star_one","solve_star_two"]};

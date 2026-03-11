@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="— Day 13: Distress Signal —"><title>advent_of_code_2022::day_13 - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-aa0817cf.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="advent_of_code_2022" data-themes="" data-resource-suffix="" data-rustdoc-version="1.90.0 (1159e78c4 2025-09-14)" data-channel="1.90.0" data-search-js="search-fa3e91e5.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-68b7e25d.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-eebb9057.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../advent_of_code_2022/index.html">advent_<wbr>of_<wbr>code_<wbr>2022</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module day_13</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#-day-13-distress-signal-" title="— Day 13: Distress Signal —">— Day 13: Distress Signal —</a><ul><li><a href="#part-two" title="Part Two">Part Two</a></li></ul></li></ul><h3><a href="#constants">Module Items</a></h3><ul class="block"><li><a href="#constants" title="Constants">Constants</a></li><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate advent_<wbr>of_<wbr>code_<wbr>2022</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">advent_of_code_2022</a></div><h1>Module <span>day_13</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/advent_of_code_2022/day_13.rs.html#1-362">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="-day-13-distress-signal-"><a class="doc-anchor" href="#-day-13-distress-signal-">§</a>— Day 13: Distress Signal —</h2>
+<p>You climb the hill and again try contacting the Elves. However, you instead receive a signal you weren’t expecting: a distress signal.</p>
+<p>Your handheld device must still not be working properly; the packets from the distress signal got decoded out of order. You’ll need to re-order the list of received packets (your puzzle input) to decode the message.</p>
+<p>Your list consists of pairs of packets; pairs are separated by a blank line. You need to identify how many pairs of packets are in the right order.</p>
+<p>For example:</p>
+<div class="example-wrap"><pre class="language-txt"><code>[1,1,3,1,1]
+[1,1,5,1,1]
+
+[[1],[2,3,4]]
+[[1],4]
+
+[9]
+[[8,7,6]]
+
+[[4,4],4,4]
+[[4,4],4,4,4]
+
+[7,7,7,7]
+[7,7,7]
+
+[]
+[3]
+
+[[[]]]
+[[]]
+
+[1,[2,[3,[4,[5,6,7]]]],8,9]
+[1,[2,[3,[4,[5,6,0]]]],8,9]</code></pre></div>
+<p>Packet data consists of lists and integers. Each list starts with [, ends with ], and contains zero or more comma-separated values (either integers or other lists). Each packet is always a list and appears on its own line.</p>
+<p>When comparing two values, the first value is called left and the second value is called right. Then:</p>
+<p>If both values are integers, the lower integer should come first. If the left integer is lower than the right integer, the inputs are in the right order. If the left integer is higher than the right integer, the inputs are not in the right order. Otherwise, the inputs are the same integer; continue checking the next part of the input.
+If both values are lists, compare the first value of each list, then the second value, and so on. If the left list runs out of items first, the inputs are in the right order. If the right list runs out of items first, the inputs are not in the right order. If the lists are the same length and no comparison makes a decision about the order, continue checking the next part of the input.
+If exactly one value is an integer, convert the integer to a list which contains that integer as its only value, then retry the comparison. For example, if comparing <code>[0,0,0]</code> and 2, convert the right value to <code>[2]</code> (a list containing 2); the result is then found by instead comparing <code>[0,0,0]</code> and <code>[2]</code>.
+Using these rules, you can determine which of the pairs in the example are in the right order:</p>
+<div class="example-wrap"><pre class="language-txt"><code>== Pair 1 ==
+- Compare [1,1,3,1,1] vs [1,1,5,1,1]
+  - Compare 1 vs 1
+  - Compare 1 vs 1
+  - Compare 3 vs 5
+    - Left side is smaller, so inputs are in the right order
+
+== Pair 2 ==
+- Compare [[1],[2,3,4]] vs [[1],4]
+  - Compare [1] vs [1]
+    - Compare 1 vs 1
+  - Compare [2,3,4] vs 4
+    - Mixed types; convert right to [4] and retry comparison
+    - Compare [2,3,4] vs [4]
+      - Compare 2 vs 4
+        - Left side is smaller, so inputs are in the right order
+
+== Pair 3 ==
+- Compare [9] vs [[8,7,6]]
+  - Compare 9 vs [8,7,6]
+    - Mixed types; convert left to [9] and retry comparison
+    - Compare [9] vs [8,7,6]
+      - Compare 9 vs 8
+        - Right side is smaller, so inputs are not in the right order
+
+== Pair 4 ==
+- Compare [[4,4],4,4] vs [[4,4],4,4,4]
+  - Compare [4,4] vs [4,4]
+    - Compare 4 vs 4
+    - Compare 4 vs 4
+  - Compare 4 vs 4
+  - Compare 4 vs 4
+  - Left side ran out of items, so inputs are in the right order
+
+== Pair 5 ==
+- Compare [7,7,7,7] vs [7,7,7]
+  - Compare 7 vs 7
+  - Compare 7 vs 7
+  - Compare 7 vs 7
+  - Right side ran out of items, so inputs are not in the right order
+
+== Pair 6 ==
+- Compare [] vs [3]
+  - Left side ran out of items, so inputs are in the right order
+
+== Pair 7 ==
+- Compare [[[]]] vs [[]]
+  - Compare [[]] vs []
+    - Right side ran out of items, so inputs are not in the right order
+
+== Pair 8 ==
+- Compare [1,[2,[3,[4,[5,6,7]]]],8,9] vs [1,[2,[3,[4,[5,6,0]]]],8,9]
+  - Compare 1 vs 1
+  - Compare [2,[3,[4,[5,6,7]]]] vs [2,[3,[4,[5,6,0]]]]
+    - Compare 2 vs 2
+    - Compare [3,[4,[5,6,7]]] vs [3,[4,[5,6,0]]]
+      - Compare 3 vs 3
+      - Compare [4,[5,6,7]] vs [4,[5,6,0]]
+        - Compare 4 vs 4
+        - Compare [5,6,7] vs [5,6,0]
+          - Compare 5 vs 5
+          - Compare 6 vs 6
+          - Compare 7 vs 0
+            - Right side is smaller, so inputs are not in the right order</code></pre></div>
+<p>What are the indices of the pairs that are already in the right order? (The first pair has index 1, the second pair has index 2, and so on.) In the above example, the pairs in the right order are 1, 2, 4, and 6; the sum of these indices is 13.</p>
+<p>Determine which pairs of packets are already in the right order. What is the sum of the indices of those pairs?</p>
+<p>Your puzzle answer was 4821.</p>
+<h3 id="part-two"><a class="doc-anchor" href="#part-two">§</a>Part Two</h3>
+<p>Now, you just need to put all of the packets in the right order. Disregard the blank lines in your list of received packets.</p>
+<p>The distress signal protocol also requires that you include two additional divider packets:</p>
+<div class="example-wrap"><pre class="language-txt"><code>[[2]]
+[[6]]</code></pre></div>
+<p>Using the same rules as before, organize all packets - the ones in your list of received packets as well as the two divider packets - into the correct order.</p>
+<p>For the example above, the result of putting the packets in the correct order is:</p>
+<div class="example-wrap"><pre class="language-txt"><code>[]
+[[]]
+[[[]]]
+[1,1,3,1,1]
+[1,1,5,1,1]
+[[1],[2,3,4]]
+[1,[2,[3,[4,[5,6,0]]]],8,9]
+[1,[2,[3,[4,[5,6,7]]]],8,9]
+[[1],4]
+[[2]]
+[3]
+[[4,4],4,4]
+[[4,4],4,4,4]
+[[6]]
+[7,7,7]
+[7,7,7,7]
+[[8,7,6]]
+[9]</code></pre></div>
+<p>Afterward, locate the divider packets. To find the decoder key for this distress signal, you need to determine the indices of the two divider packets and multiply them together. (The first packet is at index 1, the second packet is at index 2, and so on.) In this example, the divider packets are 10th and 14th, and so the decoder key is 140.</p>
+<p>Organize all of the packets into the correct order. What is the decoder key for the distress signal?</p>
+<p>Your puzzle answer was 21890.</p>
+<p>Both parts of this puzzle are complete! They provide two gold stars: **</p>
+</div></details><h2 id="constants" class="section-header">Constants<a href="#constants" class="anchor">§</a></h2><dl class="item-table"><dt><a class="constant" href="constant.EXAMPLE.html" title="constant advent_of_code_2022::day_13::EXAMPLE">EXAMPLE</a></dt></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.solve_star_one.html" title="fn advent_of_code_2022::day_13::solve_star_one">solve_<wbr>star_<wbr>one</a></dt><dt><a class="fn" href="fn.solve_star_two.html" title="fn advent_of_code_2022::day_13::solve_star_two">solve_<wbr>star_<wbr>two</a></dt></dl></section></div></main></body></html>

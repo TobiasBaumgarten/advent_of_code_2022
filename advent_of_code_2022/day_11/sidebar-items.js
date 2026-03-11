@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["EXAMPLE"],"fn":["solve_stars","worry_behavior_div_3","worry_behavior_none"]};

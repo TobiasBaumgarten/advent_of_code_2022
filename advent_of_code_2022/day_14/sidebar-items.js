@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["EXAMPLE"],"fn":["solve_star_one","solve_star_two"]};
